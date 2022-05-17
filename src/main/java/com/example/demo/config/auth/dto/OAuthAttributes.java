@@ -59,7 +59,7 @@ public class OAuthAttributes {
                 .name(name)
                 .email(email)
                 .picture(picture)
-                .role(Role.GUEST)
+                .role(Role.GUEST) // 이러면 새로 생성되는건 기본적으로 GUEST가 된다.
                 .build();
     }
 }
