@@ -28,6 +28,7 @@ dependencies {
 	implementation 'com.h2database:h2'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.session:spring-session-jdbc'
+	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.22.0'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
