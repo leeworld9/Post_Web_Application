@@ -14,7 +14,7 @@ cache:
 
 script: "./gradlew clean build"
 
-before_deploy:
+before_deploy: # CodeDeploy는 Jar 파일은 인식하지 못하므로 Jar+기타 설정 파일들을 모아 압축 (zip)합니다.
   - zip -r Post_Web_Application *
   - mkdir -p deploy
   - mv Post_Web_Application.zip deploy/Post_Web_Application.zip
@@ -23,7 +23,7 @@ deploy:
   - provider: s3
     access_key_id: $AWS_ACCESS_KEY # Travis repo settings에 설정된 값 (웹 에서 저장한 값이 변수로 사용됨)
     secret_access_key: $AWS_SECRET_KEY # Travis repo settings에 설정된 값 (웹 에서 저장한 값이 변수로 사용됨)
-    bucket: freelec-springboot-build # S3 버킷
+    bucket: post-web-build # S3 버킷
     region: ap-northeast-2
     skip_cleanup: true
     acl: private # zip 파일 접근을 private으로
