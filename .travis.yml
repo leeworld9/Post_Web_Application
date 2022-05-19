@@ -36,8 +36,8 @@ deploy:
     bucket: post-web-build # S3 버킷
     key: Post_Web_Application.zip # 빌드 파일을 압축해서 전달
     bundle_type: zip # 압축 확장자
-    application: freelec-springboot2-webservice # 웹 콘솔(Code Deploy)에서 등록 한 CodeDeploy 애플리케이션
-    deployment_group: freelec-springboot2-webservice-group # 웹 콘솔(Code Deploy)에서 등록한 CodeDeploy 배포 그룹
+    application: post-web-application # 웹 콘솔(Code Deploy)에서 등록 한 CodeDeploy 애플리케이션
+    deployment_group: post-web-application-group # 웹 콘솔(Code Deploy)에서 등록한 CodeDeploy 배포 그룹
     region: ap-northeast-2
     wait-until-deployed: true
 
