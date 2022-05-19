@@ -15,9 +15,13 @@ cache:
 script: "./gradlew clean build"
 
 before_deploy: # CodeDeploy는 Jar 파일은 인식하지 못하므로 Jar+기타 설정 파일들을 모아 압축 (zip)합니다.
-  - zip -r Post_Web_Application *
-  - mkdir -p deploy
-  - mv Post_Web_Application.zip deploy/Post_Web_Application.zip
+  - mkdir -p before-deploy # zip에 포함시킬 파일들을 담을 디렉토리 생성 (Travis CI는 S3로 디렉토리 단위로만 업로드할 수 있기 때문에 before-deploy 디렉토리는 항상 생성합니다.)
+  - cp scripts/*.sh before-deploy/
+  - cp appspec.yml before-deploy/
+  - cp build/libs/*.jar before-deploy/
+  - cd before-deploy && zip -r before-deploy * # before-deploy로 이동 후 전체 압축
+  - cd ../ && mkdir -p deploy # 상위 디렉토리로 이동 후 deploy 디렉토리 생성
+  - mv before-deploy/before-deploy.zip deploy/Post_Web_Application.zip # deploy로 zip파일 이동
 
 deploy:
   - provider: s3
