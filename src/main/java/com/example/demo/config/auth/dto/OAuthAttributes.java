@@ -59,7 +59,7 @@ public class OAuthAttributes {
                 .name(name)
                 .email(email)
                 .picture(picture)
-                .role(Role.GUEST) // 이러면 새로 생성되는건 기본적으로 GUEST가 된다.
+                .role(Role.USER) // 이러면 유저 생성시 기본 USER 권한으로 부여됨
                 .build();
     }
 }
