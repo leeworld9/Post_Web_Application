@@ -8,7 +8,6 @@ files:
 permissions: # CodeDeploy에서 EC2 서버로 넘겨준 파일들을 모두 ec2-user 권한을 갖도록 합니다.
   - object: /
     pattern: "**"
-    mode: "0764" # 기본 umask가 0002로, 파일생성 시 실행권한이 없다(0664). 따라서 쉘 스크립트를 실행시키기 위해 실행권한을 추가해줬습니다.
     owner: ec2-user
     group: ec2-user
 
