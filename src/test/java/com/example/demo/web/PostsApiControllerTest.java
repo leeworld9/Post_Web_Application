@@ -1,36 +1,49 @@
 package com.example.demo.web;
 
+import com.example.demo.config.RestDocConfiguration;
 import com.example.demo.domain.posts.Posts;
 import com.example.demo.domain.posts.PostsRepository;
-import com.example.demo.web.dto.PostsResponseDto;
 import com.example.demo.web.dto.PostsSaveRequestDto;
 import com.example.demo.web.dto.PostsUpdateRequestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.*;
+import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import(RestDocConfiguration.class) // 테스트 설정 import
 public class PostsApiControllerTest {
     /*
     @SpringBootTest와 @WebMvcTest는 스캔 범위가 다릅니다. ( 따라서, 테스트 시 주의가 필요합니다. )
@@ -60,11 +73,18 @@ public class PostsApiControllerTest {
 
     private MockMvc mvc;
 
+    // Spring Rest Docs는 설정법이 Junit 버전별로 다르다. (아래는 4 버전의 설정 방법이다.)
+    // JUnitRestDocumentation 객체를 생성해준 후, setup() 메소드의 MockMvcBuilders에서 apply 해줘야한다.
+    @Rule
+    public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
+
     @Before
     public void setup() {
         mvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(springSecurity())
+                .addFilters(new CharacterEncodingFilter("UTF-8", true))
+                .apply(documentationConfiguration(restDocumentation))
                 .build();
     }
     /////////////// end /////////////////
@@ -93,7 +113,25 @@ public class PostsApiControllerTest {
         mvc.perform(post(url)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(requestDto)))
-                    .andExpect(status().isOk());
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("PostSave",
+                        requestHeaders( // 요청 헤더
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
+                        ),
+                        requestFields( // 요청 필드
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시물 제목"),
+                                fieldWithPath("content").type(JsonFieldType.STRING).description("게시물 내용"),
+                                fieldWithPath("author").type(JsonFieldType.STRING).description("게시물 작성자")
+                        ),
+                        responseHeaders( // 응답 헤더
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
+                        ),
+                        responseBody()
+//                        responseFields( // 응답 필드
+//                                // api가 객체를 반환 하지 않는데, responseFields를 사용하면 ClassCastException 에러가 난다.
+//                        ))
+                ));
 
         //then
         //assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
