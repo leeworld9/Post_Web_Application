@@ -115,22 +115,18 @@ public class PostsApiControllerTest {
                 .content(new ObjectMapper().writeValueAsString(requestDto)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("PostSave",
-                        requestHeaders( // 요청 헤더
+                .andDo(document("PostSave-Post",
+                        requestHeaders(
                                 headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                         ),
-                        requestFields( // 요청 필드
+                        requestFields(
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("게시물 제목"),
                                 fieldWithPath("content").type(JsonFieldType.STRING).description("게시물 내용"),
                                 fieldWithPath("author").type(JsonFieldType.STRING).description("게시물 작성자")
                         ),
-                        responseHeaders( // 응답 헤더
+                        responseHeaders(
                                 headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
-                        ),
-                        responseBody()
-//                        responseFields( // 응답 필드
-//                                // api가 객체를 반환 하지 않는데, responseFields를 사용하면 ClassCastException 에러가 난다.
-//                        ))
+                        )
                 ));
 
         //then
