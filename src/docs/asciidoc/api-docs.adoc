@@ -7,14 +7,66 @@ dohelee;
 :toclevels: 2
 :sectlinks:
 
+
+
 [[PostSave]]
-== Post Save (Post)
+== Post Save (POST)
 
 요청 예시
-include::{snippets}/PostSave-Post/http-request.adoc[]
+include::{snippets}/PostSave-POST/http-request.adoc[]
 요청 필드
-include::{snippets}/PostSave-Post/request-fields.adoc[]
+include::{snippets}/PostSave-POST/request-fields.adoc[]
 응답 예시
-include::{snippets}/PostSave-Post/http-response.adoc[]
+include::{snippets}/PostSave-POST/http-response.adoc[]
 응답 필드 또는 응답 바디
-include::{snippets}/PostSave-Post/response-body.adoc[]
+include::{snippets}/PostSave-POST/response-body.adoc[]
+
+[[PostUpdate]]
+== Post Update (PUT)
+
+요청 예시
+include::{snippets}/PostUpdate-PUT/http-request.adoc[]
+
+요청 필드
+include::{snippets}/PostUpdate-PUT/request-fields.adoc[]
+
+응답 예시
+include::{snippets}/PostUpdate-PUT/http-response.adoc[]
+
+응답 필드 또는 응답 바디
+include::{snippets}/PostUpdate-PUT/response-body.adoc[]
+
+
+
+[[PostFind]]
+== Post Find (GET)
+
+요청 예시
+include::{snippets}/PostFind-GET/http-request.adoc[]
+
+요청 필드 +
+- None
+
+응답 예시
+include::{snippets}/PostFind-GET/http-response.adoc[]
+
+응답 필드 또는 응답 바디
+include::{snippets}/PostFind-GET/response-fields.adoc[]
+
+
+
+[[PostDelete]]
+== Post Delete (DELETE)
+
+요청 예시
+include::{snippets}/PostDelete-DELETE/http-request.adoc[]
+
+요청 필드 +
+- None
+
+응답 예시
+include::{snippets}/PostDelete-DELETE/http-response.adoc[]
+
+응답 필드 또는 응답 바디
+include::{snippets}/PostDelete-DELETE/response-body.adoc[]
+

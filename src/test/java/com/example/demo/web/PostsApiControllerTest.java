@@ -19,6 +19,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.*;
 import org.springframework.restdocs.JUnitRestDocumentation;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -36,6 +37,8 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -98,12 +101,12 @@ public class PostsApiControllerTest {
     @WithMockUser(roles="USER") // @WithMockUser : 인증된 모의 사용자를 만들어서 사용 (roles에 권한 추가 가능)
     public void Post_등록된다() throws Exception {
         //given
-        String title = "title";
-        String content = "content";
+        String title = "제목1";
+        String content = "내용1";
         PostsSaveRequestDto requestDto = PostsSaveRequestDto.builder()
                 .title(title)
                 .content(content)
-                .author("author")
+                .author("user1")
                 .build();
 
         String url = "http://localhost:" + port + "/api/v1/posts";
@@ -115,7 +118,7 @@ public class PostsApiControllerTest {
                 .content(new ObjectMapper().writeValueAsString(requestDto)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("PostSave-Post",
+                .andDo(document("PostSave-POST",
                         requestHeaders(
                                 headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
                         ),
@@ -143,29 +146,45 @@ public class PostsApiControllerTest {
     public void Posts_수정된다() throws Exception {
         //given
         Posts savedPosts = postsRepository.save(Posts.builder()
-                .title("title")
-                .content("content")
-                .author("author")
+                .title("제목1")
+                .content("내용1")
+                .author("user1")
                 .build());
 
         Long updateId = savedPosts.getId();
-        String expectedTitle = "title2";
-        String expectedContent = "content2";
+        String expectedTitle = "제목2";
+        String expectedContent = "내용2";
 
         PostsUpdateRequestDto requestDto = PostsUpdateRequestDto.builder()
                 .title(expectedTitle)
                 .content(expectedContent)
                 .build();
 
-        String url = "http://localhost:" + port + "/api/v1/posts/"+ updateId;
+        String url = "http://localhost:" + port + "/api/v1/posts/{id}";
         HttpEntity<PostsUpdateRequestDto> requestEntity = new HttpEntity<>(requestDto);
 
         //when
         //ResponseEntity<Long> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, requestEntity, Long.class);
-        mvc.perform(put(url)
+        mvc.perform(RestDocumentationRequestBuilders.put(url, updateId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(requestDto)))
-                    .andExpect(status().isOk());
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("PostUpdate-PUT",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
+                        ),
+                        pathParameters(
+                                parameterWithName("id").description("게시물 번호")
+                        ),
+                        requestFields(
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시물 제목"),
+                                fieldWithPath("content").type(JsonFieldType.STRING).description("게시물 내용")
+                        ),
+                        responseHeaders(
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
+                        )
+                ));
 
         //then
         //assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -180,13 +199,13 @@ public class PostsApiControllerTest {
     @WithMockUser(roles="USER")
     public void Posts_조회된다() throws Exception {
         //given
-        String title = "title";
-        String content = "content";
+        String title = "제목1";
+        String content = "내용1";
 
         Posts savedPosts = postsRepository.save(Posts.builder()
                 .title(title)
                 .content(content)
-                .author("author")
+                .author("user1")
                 .build());
 
         String url = "http://localhost:" + port + "/api/v1/posts/{id}";
@@ -194,8 +213,23 @@ public class PostsApiControllerTest {
 
         //when
         //ResponseEntity<PostsResponseDto> responseEntity = restTemplate.getForEntity(url, PostsResponseDto.class, findId);
-        mvc.perform(get(url, findId))
-                .andExpect(status().isOk());
+        mvc.perform(RestDocumentationRequestBuilders.get(url, findId))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("PostFind-GET",
+                        pathParameters(
+                                parameterWithName("id").description("게시물 번호")
+                        ),
+                        responseHeaders(
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
+                        ),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("게시물 번호"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("게시물 제목"),
+                                fieldWithPath("content").type(JsonFieldType.STRING).description("게시물 내용"),
+                                fieldWithPath("author").type(JsonFieldType.STRING).description("게시물 작성자")
+                        )
+                ));
 
         //then
         //assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -209,13 +243,13 @@ public class PostsApiControllerTest {
     @WithMockUser(roles="USER")
     public void Posts_삭제된다() throws Exception{
         //given
-        String title = "title";
-        String content = "content";
+        String title = "제목1";
+        String content = "내용1";
 
         Posts savedPosts = postsRepository.save(Posts.builder()
                 .title(title)
                 .content(content)
-                .author("author")
+                .author("user1")
                 .build());
 
         String url = "http://localhost:" + port + "/api/v1/posts/{id}";
@@ -223,8 +257,17 @@ public class PostsApiControllerTest {
 
         //when
         //restTemplate.delete(url, findId);
-        mvc.perform(delete(url, findId))
-                .andExpect(status().isOk());
+        mvc.perform(RestDocumentationRequestBuilders.delete(url, findId))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("PostDelete-DELETE",
+                        pathParameters(
+                                parameterWithName("id").description("게시물 번호")
+                        ),
+                        responseHeaders(
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description(MediaType.APPLICATION_JSON_VALUE)
+                        )
+                ));
 
         //then
         Optional result = postsRepository.findById(findId);
