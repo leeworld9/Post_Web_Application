@@ -16,7 +16,7 @@
 - ORM : JPA
 - 인증 : Session 기반
 - 테스트 : JUnit 4.13.1
-- API 명세 : Spring Rest Docs 2.0.6.RELEASE
+- API 문서 : Spring Rest Docs 2.0.6.RELEASE
 - 빌드 도구 : gradle 6.9
 - 서버 : AWS
   - Amazone EC2 인스턴스 (Amazon Linux 2)
