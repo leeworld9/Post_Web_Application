@@ -36,5 +36,5 @@ out/
 .vscode/
 
 # New
-application-oauth.properties
-application-real-db.properties
+#application-oauth.properties
+#application-real-db.properties
