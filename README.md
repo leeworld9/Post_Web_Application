@@ -5,7 +5,7 @@
 * **스프링 시큐리티를 이용한 소셜 로그인(OAuth 2.0) 구현**
 * **Junit을 이용한 단위 테스트 구현**
 * ~~Swagger를 사용한 API 문서 자동화~~ --> **Spring Rest Docs를 사용한 API 문서 자동화**
-  * [링크 추가 예정]
+  * [api-docs.html](https://drive.google.com/file/d/1dO8BbJk6v_-YfN7SNkDrxoFZepeATMh0/view?usp=sharing)
 * AWS EC2, AWS RDS, AWS Elastic IP 사용
 * **CI/CD를 이용한 배포**
 * **무중단 배포환경 구축**
