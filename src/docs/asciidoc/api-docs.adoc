@@ -14,10 +14,13 @@ dohelee;
 
 요청 예시
 include::{snippets}/PostSave-POST/http-request.adoc[]
+
 요청 필드
 include::{snippets}/PostSave-POST/request-fields.adoc[]
+
 응답 예시
 include::{snippets}/PostSave-POST/http-response.adoc[]
+
 응답 필드 또는 응답 바디
 include::{snippets}/PostSave-POST/response-body.adoc[]
 
